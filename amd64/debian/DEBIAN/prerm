@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installdocs
+if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/visquacompress ]; then
+  rm -f /usr/doc/visquacompress
+fi
+# End automatically added section
+

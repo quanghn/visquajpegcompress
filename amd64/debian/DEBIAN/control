@@ -1,0 +1,8 @@
+Package: visquacompress
+Version: 1.0.1
+Section: base
+Priority: optional
+Architecture: amd64
+Depends:
+Maintainer: Quang Ho-Ngoc <quanghn@visqua.com>
+Description: Visqua compresss client

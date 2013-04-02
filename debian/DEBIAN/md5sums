@@ -1,0 +1,4 @@
+99fa55d64b2bb86ea579007e81460200  debian/DEBIAN/control
+d1731e4b7c86ac56bcaf714fae9f39a0  debian/DEBIAN/postinst
+673011ad5776c9b4d97865ddcef1bc5a  debian/DEBIAN/prerm
+af080af4e865d456ba5395237b0c572c  debian/usr/bin/client

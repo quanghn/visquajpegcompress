@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installdocs
+if [ "$1" = "configure" ]; then
+  if [ -d /usr/doc -a ! -e /usr/doc/visquacompress -a -d /usr/share/visquacompress/ ]; then
+    ln -sf ../share/doc/visquacompress /usr/doc/visquacompress
+  fi
+#	if [ -f /etc/visquacompress/visqua.conf ]; then
+#	echo "Do you want replace config file? (yes/no)"
+#	read agree
+#	if [ "$agree" = "yes" ]; then
+#	cp /etc/visquacompress/visqua.conf /etc/visquacompress/visqua.conf.bak
+#	fi
+ # fi
+fi
+# End automatically added section

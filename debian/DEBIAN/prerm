@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installdocs
+if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/visquacompress ]; then
+  rm -f /usr/doc/visquacompress
+fi
+# End automatically added section
+#if [ -f /etc/visquacompress/visqua.conf ]; then
+#echo "Do you want replace config file? (yes/no)"
+#read agree
+#if [ "$agree" = "yes" ]; then
+#cp /etc/visquacompress/visqua.conf /etc/visquacompress/visqua.conf.bak
+#fi
+#fi
+ 

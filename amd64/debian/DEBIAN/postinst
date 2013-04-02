@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+# Automatically added by dh_installdocs
+if [ "$1" = "configure" ]; then
+  if [ -d /usr/doc -a ! -e /usr/doc/visquacompress -a -d /usr/share/visquacompress/ ]; then
+    ln -sf ../share/doc/visquacompress /usr/doc/visquacompress
+  fi
+fi
+# End automatically added section

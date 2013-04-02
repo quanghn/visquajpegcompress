@@ -1,0 +1,35 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          visquacompress
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the visqua compress client
+# Description:       starts visqua compress using start-stop-daemon
+### END INIT INFO
+PATH=/sbin:/bin
+RUN_AS=root
+test -f /usr/bin/visquacompress || exit 0
+
+case "$1" in
+start)
+  echo -n "Starting visqua compress "
+  start-stop-daemon --start --background -c $RUN_AS --make-pidfile --pidfile /var/run/visquacompress.pid --startas /usr/bin/visquacompress
+  echo "."
+  ;;
+restart|reload|force-reload)
+  $0 stop
+  $0 start
+  ;;
+stop)
+  echo -n "Stopping visqua compress "
+  start-stop-daemon --stop --pidfile /var/run/visquacompress.pid
+  echo "."
+  ;;
+*)
+  echo "Usage: $0 {start|stop|restart|reload|force-reload}"
+  exit 1
+esac
+
+exit 0
