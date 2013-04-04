@@ -159,7 +159,7 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
             /* only disable 100-continue header if explicitly requested */ 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
             curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
             curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
             curl_easy_setopt(curl, CURLOPT_FILE, fp);
             

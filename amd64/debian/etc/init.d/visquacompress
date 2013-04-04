@@ -10,8 +10,9 @@
 ### END INIT INFO
 PATH=/sbin:/bin
 RUN_AS=root
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
 test -f /usr/bin/visquacompress || exit 0
-
 case "$1" in
 start)
   echo -n "Starting visqua compress "
