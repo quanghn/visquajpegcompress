@@ -15,6 +15,7 @@
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <zip.h>
+#include <dlfcn.h>
 #include "support_functions.h"
 #include "visqua_compress.h"
 using namespace std;
@@ -23,7 +24,30 @@ using namespace std;
 #define MAXLINELENGTH 1024
 
 using namespace std;
+class Ping{
+private:
+       string target;
+public:
+       Ping(){}
+       Ping(string _target);
+       void setTarget( string _target);
+       void startPing();
+};
+Ping::Ping(string _target) : target( _target){}
 
+void Ping::setTarget( string _target )
+{
+     this->target = _target ;
+}
+void Ping::startPing()
+{
+     cout << "Pinging " << target << endl;
+     cout << "Please wait..." << endl ;
+     string pingStr = "ping  " + target ;
+
+     int flag = system( pingStr.c_str());
+     cout << "flag" << flag << endl;
+}
 struct file_to_compress {
 	string inname, outname, username;
 };
@@ -65,9 +89,10 @@ bool insert_compressed_image_infomation_to_file(string log_file, string filename
 bool is_input_dir(string input_name) {
 	for (int i=0; i<NUM_OF_EXCLUDE_DIR; i++) {
 		int found = input_name.find(exclude_dir[i]);
-		//cout << "i: " << i << endl;
+		//cout << "found: " << found << endl;
 		//cerr << "exclude = " << exclude_dir[i] << endl;
-		int next_slash_position = found + exclude_dir[i].length();
+		unsigned int next_slash_position = found + exclude_dir[i].length();
+		//cout << "exclude dir" << exclude_dir[i].length() << endl;
 		//cout << "next_slash_position: " << next_slash_position << endl;
 		if (found > -1) {
 			if ((next_slash_position >= input_name.length()) || (input_name[next_slash_position] == '/')) {
@@ -85,7 +110,7 @@ string get_output_dir(string input_dir, string root_dir) {
 	}
 	else {
 		string temp = input_dir.substr(root_dir.length());
-		int index2 = temp.find("/");
+		unsigned int index2 = temp.find("/");
 		if (index2 < 0){
 			return root_dir + "original_files/";
 		}
@@ -118,7 +143,7 @@ void get_file_and_compress() {
 	if (num_of_compress_process >= max_of_compress_process)
 		return;
 	
-	struct file_to_compress ftc = files_queue.front();
+	struct file_to_compress ftc = files_queue.front(), ftc1;
 	files_queue.pop();
 	string temp = ftc.inname.substr(root_dir.length());
 	files_map[temp] = 0;
@@ -140,6 +165,21 @@ void get_file_and_compress() {
 			cout << "Checking file:'" << ftc.inname << "'\n";
 			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
 			//}
+			if (isSent)
+			{}
+				//cout << "Ok" << endl;
+			else{
+				cerr << "push file: " << filename << " to queue \n" << endl;
+				//cout << "Temp: " << temp << endl;
+				if (files_map[temp] == 0) {
+						files_queue.push(ftc);
+						files_map[temp] = 1;
+					}
+				cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
+				cerr << "size: " << files_queue.size() << endl;
+				//cout << "Pid: " << pid << endl;
+				//num_of_compress_process++;
+				}
 			_exit(0);
 		}
 		else {
@@ -205,29 +245,9 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 				struct file_to_compress ftc;
 				
 				ftc.inname = input_full_filename;
-				//ftc.outname = output_full_filename;
-				/*if (keep_original == "yes"){
-						cout << "backing up file" << endl;
-						mkpath(output_dir.c_str(), 0777);
-						ifstream f1 ((char*)ftc.inname.c_str(), fstream::binary);
-                		ofstream f2 ((char*)output_full_filename.c_str(), fstream::trunc|fstream::binary);
-                		cout << "f1: " << ftc.inname << endl;
-                		cout << "f2: " << output_full_filename << endl;
-                		char ch;
-		                if(!f1) 
-		                  cout << "Can't open INPUT file: " << f1 << endl;
-		                 
-		                if(!f2) 
-		                  cout << "Can't open OUTPUT file" << f2 << endl;
-		                  
-		                while(f1 && f1.get(ch) ) 
-		                f2.put(ch);
-		        }
-		        else{
-		        	cout << "No" << endl;
-		        }*/
 				cerr << "push file: " << input_full_filename << " to queue \n" << endl;
 				string temp = input_full_filename.substr(root_dir.length());
+				//cout << "Temp: " << temp << endl;
 				if (files_map[temp] == 0) {
 					files_queue.push(ftc);
 					files_map[temp] = 1;

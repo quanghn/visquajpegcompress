@@ -255,4 +255,16 @@ void split_path(string path, string &dirname, string &input_short_filename) {
     input_short_filename = path;
   }
 }
+bool insert_compressed_image_infomation_to_file(string log_file, string filename) {
+  ofstream fo(log_file.c_str());
+  //int month = get_current_month() - 1;
+  string datetime = get_current_datetime();
+  if (fo) {
+    fo << datetime << ": " << filename << endl;
+    fo << endl;
+    fo.close();
+    return true;
+  }
+  else return false;
+}
 

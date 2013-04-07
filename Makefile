@@ -1,14 +1,14 @@
-CC	:= gcc 
-CPP	:= g++ 
+CC	:= gcc -Wall
+CPP	:= g++ -Wall
 OBJECTS := support_functions.o visqua_compress.o
 
 INCLUDES := -I include/
 LIBS_VISQUA := lib/libev.a lib/libzip.a lib/libz.a lib/libcurl.a lib/libexiv2.a lib/libexpatw.a lib/librt.a -lpthread
 LINK := -L /home/quang/glibc/
-all: binary/visquacompress_i386
+all: binary/visquacompress_i386 debian/usr/bin/visquacompress
 
-#debian/usr/bin/visquacompress: $(OBJECTS) client.cpp
-#	$(CPP) -o debian/usr/bin/visquacompress client.cpp -static-libgcc -static-libstdc++ $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static
+debian/usr/bin/visquacompress: $(OBJECTS) client.cpp
+	$(CPP) -o debian/usr/bin/visquacompress client.cpp -static-libgcc -static-libstdc++ $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static
 	
 binary/visquacompress_i386: $(OBJECTS) client_linux.cpp
 	$(CPP) -o binary/visquacompress_i386 client_linux.cpp $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static $(LINK)

@@ -24,37 +24,11 @@ using namespace std;
 #define MAXLINELENGTH 1024
 
 using namespace std;
-class Ping{
-private:
-       string target;
-public:
-       Ping(){}
-       Ping(string _target);
-       void setTarget( string _target);
-       void startPing();
-};
-Ping::Ping(string _target) : target( _target){}
 
-void Ping::setTarget( string _target )
-{
-     this->target = _target ;
-}
-void Ping::startPing()
-{
-     cout << "Pinging " << target << endl;
-     cout << "Please wait..." << endl ;
-     string pingStr = "ping  " + target ;
-
-     int flag = system( pingStr.c_str());
-     cout << "flag" << flag << endl;
-}
 struct file_to_compress {
 	string inname, outname, username;
 };
 
-string s_month[12] = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"};
-//int init_sql = 0;
-////MYSQL mysql;
 const int NUM_OF_EXCLUDE_DIR = 1;
 string exclude_dir[NUM_OF_EXCLUDE_DIR] = {"original_files"};
 map<int, string>wd_to_dir_name;
@@ -72,26 +46,14 @@ string log_file;
 string keep_original;
 string output_full_filename;
 map<string, int> files_map;
-/*
-bool insert_compressed_image_infomation_to_file(string log_file, string filename) {
-	ofstream fo(log_file.c_str());
-	//int month = get_current_month() - 1;
-	string datetime = get_current_datetime();
-	if (fo) {
-		fo << datetime << ": " << filename << endl;
-		//fo << endl;
-		//fo.close();
-		return true;
-	}
-	else return false;
-}
-*/
+
 bool is_input_dir(string input_name) {
 	for (int i=0; i<NUM_OF_EXCLUDE_DIR; i++) {
 		int found = input_name.find(exclude_dir[i]);
-		//cout << "i: " << i << endl;
+		//cout << "found: " << found << endl;
 		//cerr << "exclude = " << exclude_dir[i] << endl;
-		int next_slash_position = found + exclude_dir[i].length();
+		unsigned int next_slash_position = found + exclude_dir[i].length();
+		//cout << "exclude dir" << exclude_dir[i].length() << endl;
 		//cout << "next_slash_position: " << next_slash_position << endl;
 		if (found > -1) {
 			if ((next_slash_position >= input_name.length()) || (input_name[next_slash_position] == '/')) {
@@ -109,7 +71,7 @@ string get_output_dir(string input_dir, string root_dir) {
 	}
 	else {
 		string temp = input_dir.substr(root_dir.length());
-		int index2 = temp.find("/");
+		unsigned int index2 = temp.find("/");
 		if (index2 < 0){
 			return root_dir + "original_files/";
 		}
@@ -165,10 +127,11 @@ void get_file_and_compress() {
 			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
 			//}
 			if (isSent)
-				cout << "Ok" << endl;
+			{}
+				//cout << "Ok" << endl;
 			else{
 				cerr << "push file: " << filename << " to queue \n" << endl;
-				cout << "Temp: " << temp << endl;
+				//cout << "Temp: " << temp << endl;
 				if (files_map[temp] == 0) {
 						files_queue.push(ftc);
 						files_map[temp] = 1;
@@ -243,27 +206,6 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 				struct file_to_compress ftc;
 				
 				ftc.inname = input_full_filename;
-				//ftc.outname = output_full_filename;
-				/*if (keep_original == "yes"){
-						cout << "backing up file" << endl;
-						mkpath(output_dir.c_str(), 0777);
-						ifstream f1 ((char*)ftc.inname.c_str(), fstream::binary);
-                		ofstream f2 ((char*)output_full_filename.c_str(), fstream::trunc|fstream::binary);
-                		cout << "f1: " << ftc.inname << endl;
-                		cout << "f2: " << output_full_filename << endl;
-                		char ch;
-		                if(!f1) 
-		                  cout << "Can't open INPUT file: " << f1 << endl;
-		                 
-		                if(!f2) 
-		                  cout << "Can't open OUTPUT file" << f2 << endl;
-		                  
-		                while(f1 && f1.get(ch) ) 
-		                f2.put(ch);
-		        }
-		        else{
-		        	cout << "No" << endl;
-		        }*/
 				cerr << "push file: " << input_full_filename << " to queue \n" << endl;
 				string temp = input_full_filename.substr(root_dir.length());
 				//cout << "Temp: " << temp << endl;
@@ -466,11 +408,7 @@ int main(int argc, char *argv[]) {
 	cout << "log_file: " << log_file << endl;
 	cout << "url_input: " << url_input << endl;
 	cout << "keep_original: " << keep_original << endl;
-	/*void *lib_handle;
-	double (*fn)(int *);
-   	int x;
-  	char *error;
-	lib_handle = dlopen("/opt/lib/libc.so.6", RTLD_GLOBAL);*/
+	
 	if (root_dir[root_dir.length()-1] != '/') {
 		root_dir = root_dir + '/';
 	}

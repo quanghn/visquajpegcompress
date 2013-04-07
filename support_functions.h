@@ -48,4 +48,5 @@ bool zip_list_file(std::string zip_file_name, std::string list_file[], std::stri
 bool is_jpeg(char file_in_name[]);
 bool is_png(char file_in_name[]);
 void split_path(string path, string &dirname, string &input_short_filename);
+bool insert_compressed_image_infomation_to_file(string log_file, string filename);
 #endif
