@@ -84,7 +84,7 @@ bool mkpath(const char* path, mode_t mode) {
 }
 
 string to_lower(string str) {
-    for (int i=0; i<str.length(); i++) 
+    for (unsigned int i=0; i<str.length(); i++) 
         if (str[i] >= 0x41 && str[i] <= 0x5A) 
             str[i] = str[i] + 0x20;
     return str;
@@ -100,7 +100,7 @@ bool end_with(string fileName, string ext) {
     fileName = to_lower(fileName);
     ext = to_lower(ext);
 	if (ext.length() >= fileName.length()) return false;
-	for (int i=1; i<=ext.length(); i++)
+	for (unsigned int i=1; i<=ext.length(); i++)
 		if (fileName[fileName.length()-i] != ext[ext.length()-i]) {
 			return false;
 		}
@@ -243,7 +243,7 @@ bool is_png(char file_in_name[])
   return false;
 }
 void split_path(string path, string &dirname, string &input_short_filename) {
-  int index = path.find_last_of("/");
+  unsigned int index = path.find_last_of("/");
   if (index >1) {
     dirname = path.substr(0, index+1);
     if (index < path.length()-1)

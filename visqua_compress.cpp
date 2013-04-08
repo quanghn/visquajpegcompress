@@ -26,7 +26,7 @@ string get_output_dir_visqua(string input_dir, string root_dir) {
   }
   else {
     string temp = input_dir.substr(root_dir.length());
-    int index2 = temp.find("/");
+    unsigned int index2 = temp.find("/");
     if (index2 < 0){
       return root_dir + "original_files/";
     }
@@ -45,9 +45,6 @@ string get_output_dir_visqua(string input_dir, string root_dir) {
 }
 
 bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original) {
-  //revojpeg -maxmemory 200MB -optimize -distort 3-5,6-8,8-12 -march=core2 input output
-  bool ok;
-  //string filename;
   char token[FILENAME_MAX];
   char username[FILENAME_MAX];
   strcpy(token,token_input.c_str());
@@ -107,7 +104,7 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
           cout << "has not compressed by visqua before" << "'\n";
           CURL *curl;
           FILE *fp;
-          CURLcode res,status;
+          //CURLcode res;
           struct curl_slist *headerlist=NULL;
           struct curl_httppost *formpost=NULL;
           struct curl_httppost *lastptr=NULL;
@@ -140,17 +137,17 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
                      CURLFORM_FILE, inputfile,
                      CURLFORM_END);
           /* Fill in the filename field */ 
-            curl_formadd(&formpost,
-                     &lastptr,
-                     CURLFORM_COPYNAME, "token",
-                     CURLFORM_COPYCONTENTS, token,
-                     CURLFORM_END);
+          curl_formadd(&formpost,
+                   &lastptr,
+                   CURLFORM_COPYNAME, "token",
+                   CURLFORM_COPYCONTENTS, token,
+                   CURLFORM_END);
           /* Fill in the filename field */ 
-            curl_formadd(&formpost,
-                     &lastptr,
-                     CURLFORM_COPYNAME, "username",
-                     CURLFORM_COPYCONTENTS, username,
-                     CURLFORM_END);
+          curl_formadd(&formpost,
+                   &lastptr,
+                   CURLFORM_COPYNAME, "username",
+                   CURLFORM_COPYCONTENTS, username,
+                   CURLFORM_END);
           headerlist = curl_slist_append(headerlist, buf);
           curl = curl_easy_init();
           if(curl) {
@@ -164,7 +161,7 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
             curl_easy_setopt(curl, CURLOPT_FILE, fp);
             
             /* pointer to pass to our read function */ 
-            res = curl_easy_perform(curl);
+            curl_easy_perform(curl);
             /* always cleanup */
             curl_easy_getinfo(curl, CURLINFO_HTTP_CODE,&http_status);
             //cout << "Status" << http_status << endl;
@@ -205,9 +202,11 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
                 fo << datetime << " " << filename << " failed "<< endl; 
                 fo.close();
                 return false;
-              } 
+              }
+              //return true;
           }
       }
+return true;
 }
 
  

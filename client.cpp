@@ -50,11 +50,7 @@ map<string, int> files_map;
 bool is_input_dir(string input_name) {
 	for (int i=0; i<NUM_OF_EXCLUDE_DIR; i++) {
 		int found = input_name.find(exclude_dir[i]);
-		//cout << "found: " << found << endl;
-		//cerr << "exclude = " << exclude_dir[i] << endl;
 		unsigned int next_slash_position = found + exclude_dir[i].length();
-		//cout << "exclude dir" << exclude_dir[i].length() << endl;
-		//cout << "next_slash_position: " << next_slash_position << endl;
 		if (found > -1) {
 			if ((next_slash_position >= input_name.length()) || (input_name[next_slash_position] == '/')) {
 				return false;
@@ -65,7 +61,6 @@ bool is_input_dir(string input_name) {
 }
 string get_output_dir(string input_dir, string root_dir) {
 	int index = input_dir.find(root_dir);
-	//username = "";
 	if (index != 0) {
 		return "";
 	}
@@ -127,8 +122,9 @@ void get_file_and_compress() {
 			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
 			//}
 			if (isSent)
-			{}
-				//cout << "Ok" << endl;
+			{
+				cout << "Ok" << endl;
+			}
 			else{
 				cerr << "push file: " << filename << " to queue \n" << endl;
 				//cout << "Temp: " << temp << endl;

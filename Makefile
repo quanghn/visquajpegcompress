@@ -3,8 +3,8 @@ CPP	:= g++ -Wall
 OBJECTS := support_functions.o visqua_compress.o
 
 INCLUDES := -I include/
-LIBS_VISQUA := lib/libev.a lib/libzip.a lib/libz.a lib/libcurl.a lib/libexiv2.a lib/libexpatw.a lib/librt.a -lpthread
-LINK := -L /home/quang/glibc/
+LIBS_VISQUA := lib/libev.a lib/libzip.a lib/libz.a  lib/libexiv2.a lib/libexpatw.a lib/librt.a -lpthread lib/libcurl.a
+LINK := -L /home/quang/glibc/ 
 all: binary/visquacompress_i386 debian/usr/bin/visquacompress
 
 debian/usr/bin/visquacompress: $(OBJECTS) client.cpp
