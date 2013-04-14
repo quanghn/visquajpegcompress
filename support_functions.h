@@ -49,4 +49,7 @@ bool is_jpeg(char file_in_name[]);
 bool is_png(char file_in_name[]);
 void split_path(string path, string &dirname, string &input_short_filename);
 bool insert_compressed_image_infomation_to_file(string log_file, string filename);
+void remove_slash(string &str);
+string get_output_dir_visqua(string input_dir, string root_dir);
+bool metadata(string &root_dir, string &filename);
 #endif

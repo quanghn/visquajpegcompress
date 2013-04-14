@@ -23,8 +23,6 @@ using namespace std;
 #define MAX_COMPRESS_PROCESS 4
 #define MAXLINELENGTH 1024
 
-using namespace std;
-
 struct file_to_compress {
 	string inname, outname, username;
 };
@@ -35,7 +33,6 @@ map<int, string>wd_to_dir_name;
 queue<file_to_compress> files_queue;
 int fd;
 int num_of_compress_process = 0, max_of_compress_process = MAX_COMPRESS_PROCESS;
-
 ev_child cw[MAX_COMPRESS_PROCESS];
 int pid_of_ev[MAX_COMPRESS_PROCESS];
 string root_dir;
@@ -84,11 +81,6 @@ string get_output_dir(string input_dir, string root_dir) {
 	}
 }
 
-void remove_slash(string &str) {
-    while (str[str.length()-1] == '/') {
-		str = str.erase(str.length()-1, 1);
-    }
-}
 
 void child_cb (EV_P_ struct ev_child *w, int revents);
 void get_file_and_compress() {
@@ -112,13 +104,14 @@ void get_file_and_compress() {
 		else if (pid==0) {
 
 			//tien trinh con
-			//clock_t start_time,elapsed;
-			//double elapsed_time; 
-			//start_time = clock(); 
-
-			//int insize, outsize, saving, inname;
 			string filename = ftc.inname;
 			cout << "Checking file:'" << ftc.inname << "'\n";
+			bool get_metadata = metadata(root_dir, filename);
+			if (get_metadata)
+			{
+				//cout << "get_metadata Ok" << endl;
+			}
+			else{
 			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
 			//}
 			if (isSent)
@@ -134,9 +127,8 @@ void get_file_and_compress() {
 					}
 				cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
 				cerr << "size: " << files_queue.size() << endl;
-				//cout << "Pid: " << pid << endl;
-				//num_of_compress_process++;
 				}
+			}	
 			_exit(0);
 		}
 		else {
@@ -155,8 +147,7 @@ void get_file_and_compress() {
 				}
 			}
 			num_of_compress_process++;
-		}
-	
+		}	
 }
 
 void child_cb (EV_P_ struct ev_child *w, int revents) {
@@ -178,21 +169,12 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 		split_path(input_full_filename, input_dir, input_short_filename);
 		
 		if (is_input_dir(input_dir)) {
-			//string username = "";
-			//cout << "is input dir"<< endl;
-			
 			string output_dir = get_output_dir(input_dir, root_dir);
-			
-			//cout << "out dir " << output_dir << endl;
 			string output_full_filename = output_dir + input_short_filename;
-			//cout << "input_short_filename" << input_short_filename << endl;
 			
 			bool need_to_insert = false;
 			if (!overwrite) {
-				//bool exist = is_exist(output_full_filename);
-				//if (!exist) {
 				need_to_insert = true;
-				//}
 			}
 			else {
 				need_to_insert = true;

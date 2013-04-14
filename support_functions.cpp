@@ -1,5 +1,7 @@
 #include "support_functions.h"
-
+#include <exiv2/exif.hpp>
+#include <exiv2/image.hpp>
+#include <cassert>
 string int_to_string(int x) {
 	string t = "", value = "";
 	if (x<0) {
@@ -266,5 +268,64 @@ bool insert_compressed_image_infomation_to_file(string log_file, string filename
     return true;
   }
   else return false;
+}
+void remove_slash(string &str) {
+    while (str[str.length()-1] == '/') {
+    str = str.erase(str.length()-1, 1);
+    }
+}
+string get_output_dir_visqua(string input_dir, string root_dir) {
+  int index = input_dir.find(root_dir);
+  //username = "";
+  if (index != 0) {
+    return "";
+  }
+  else {
+    string temp = input_dir.substr(root_dir.length());
+    unsigned int index2 = temp.find("/");
+    if (index2 < 0){
+      return root_dir + "original_files/";
+    }
+    else if (index2 == temp.length()-1) {
+      //username = temp.substr(0, index2);
+      //cerr << "username1 = " << username << endl;
+      return  root_dir + "original_files/" + temp.substr(0, index2+1);
+      //cerr << "Input is: " << input_dir << endl;
+    }
+    else {
+      //username = temp.substr(0, index2);
+      //cerr << "username2 = " << username << endl;
+      return root_dir  + "original_files/" +  temp.substr(0, index2+1) + temp.substr(index2+1);
+    }
+  }
+}
+bool metadata(string &root_dir, string &filename){
+  bool status_of_compress=false;
+  Exiv2::Image::AutoPtr image;
+  image = Exiv2::ImageFactory::open(filename);
+  assert(image.get() != 0);
+  image->readMetadata();
+  Exiv2::IptcData &iptcData = image->iptcData();
+//Exiv2::ExifData &exifData = image->exifData();
+  Exiv2::IptcData::const_iterator end_iptcData = iptcData.end();
+  for (Exiv2::IptcData::const_iterator md = iptcData.begin(); md != end_iptcData; ++md) {
+    string compressed_by_visqua = md->value().toString().c_str();
+    if (compressed_by_visqua == "Compressed by Visqua")
+    {            
+        status_of_compress = true;
+        break;
+    }
+    //return true;
+  }
+      if (status_of_compress)
+      {
+        cout << filename << " was compressed by Visqua" << "'\n";
+        return true;
+      }
+      else{
+        cout << "has not compressed by visqua before" << "'\n";
+        return false;
+      }
+  //return true;
 }
 

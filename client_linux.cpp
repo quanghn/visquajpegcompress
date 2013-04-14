@@ -128,12 +128,6 @@ string get_output_dir(string input_dir, string root_dir) {
 	}
 }
 
-void remove_slash(string &str) {
-    while (str[str.length()-1] == '/') {
-		str = str.erase(str.length()-1, 1);
-    }
-}
-
 void child_cb (EV_P_ struct ev_child *w, int revents);
 void get_file_and_compress() {
 	if (files_queue.empty()) {

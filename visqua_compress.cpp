@@ -1,65 +1,35 @@
 #include <iostream>
-#include <ev.h>
+//#include <ev.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/inotify.h>
 #include <map>
 #include <queue>
 #include <list>
 #include <ctime>
 #include <cassert>
 #include <iomanip>
-#include <exiv2/exif.hpp>
-#include <exiv2/image.hpp>
 #include <cstring>
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <zip.h>
+//#include <zip.h>
 #include "support_functions.h"
-
-
-string get_output_dir_visqua(string input_dir, string root_dir) {
-  int index = input_dir.find(root_dir);
-  //username = "";
-  if (index != 0) {
-    return "";
-  }
-  else {
-    string temp = input_dir.substr(root_dir.length());
-    unsigned int index2 = temp.find("/");
-    if (index2 < 0){
-      return root_dir + "original_files/";
-    }
-    else if (index2 == temp.length()-1) {
-      //username = temp.substr(0, index2);
-      //cerr << "username1 = " << username << endl;
-      return  root_dir + "original_files/" + temp.substr(0, index2+1);
-      //cerr << "Input is: " << input_dir << endl;
-    }
-    else {
-      //username = temp.substr(0, index2);
-      //cerr << "username2 = " << username << endl;
-      return root_dir  + "original_files/" +  temp.substr(0, index2+1) + temp.substr(index2+1);
-    }
-  }
-}
 
 bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original) {
   char token[FILENAME_MAX];
   char username[FILENAME_MAX];
   strcpy(token,token_input.c_str());
   strcpy(username, username_input.c_str());
-  Exiv2::Image::AutoPtr image;
-  image = Exiv2::ImageFactory::open(filename);
-  assert(image.get() != 0);
-  image->readMetadata();
-  Exiv2::IptcData &iptcData = image->iptcData();
+ // Exiv2::Image::AutoPtr image;
+  //image = Exiv2::ImageFactory::open(filename);
+  //assert(image.get() != 0);
+  //image->readMetadata();
+  //Exiv2::IptcData &iptcData = image->iptcData();
 //Exiv2::ExifData &exifData = image->exifData();
-  Exiv2::IptcData::const_iterator end_iptcData = iptcData.end();
+  //Exiv2::IptcData::const_iterator end_iptcData = iptcData.end();
 //Exiv2::ExifData::const_iterator end_exifData = exifData.end();
   char inputfile[FILENAME_MAX];
   char outputfile[FILENAME_MAX];
-  bool status_of_compress=false;      
+        
         
   strcpy(inputfile,filename.c_str());
   string input_dir, input_short_filename;
@@ -67,20 +37,20 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
   string output_dir = get_output_dir_visqua(input_dir, root_dir);
   
 
-  for (Exiv2::IptcData::const_iterator md = iptcData.begin(); md != end_iptcData; ++md) {
-    string compressed_by_visqua = md->value().toString().c_str();
+  //for (Exiv2::IptcData::const_iterator md = iptcData.begin(); md != end_iptcData; ++md) {
+   // string compressed_by_visqua = md->value().toString().c_str();
   
-      if (compressed_by_visqua == "Compressed by Visqua")
-    {            
-        status_of_compress = true;
-        break;
-    }
-  }
-      if (status_of_compress)
-      {
-        cout << filename << " was compressed by Visqua" << "'\n";
-      }
-      else{
+     // if (compressed_by_visqua == "Compressed by Visqua")
+    //{            
+    //    status_of_compress = true;
+    //    break;
+    //}
+  //}
+    //  if (status_of_compress)
+    //  {
+    //    cout << filename << " was compressed by Visqua" << "'\n";
+    //  }
+    //  else{
           if (keep_original == "yes"){
           
           if (output_dir != ""){
@@ -101,7 +71,7 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
           backup_file.put(ch_backup);
           cout << "copy " << inputfile << " to " << outputfile << endl;
           }
-          cout << "has not compressed by visqua before" << "'\n";
+          //cout << "has not compressed by visqua before" << "'\n";
           CURL *curl;
           FILE *fp;
           //CURLcode res;
@@ -121,16 +91,8 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
           string filename_tmp;
           filename_tmp = splitFilename(filename);
           string temp_str = tmp_input + filename_tmp;
-
-          //cout << "ID: " << temp_str << endl; 
           char* id_filename = (char*) temp_str.c_str();
-          //char id_filename[FILENAME_MAX];
-      //    cout << "ID_Filename: " << id_filename << endl;
-          /*strcpy(id_filename,filename.c_str());
-          strcpy(id_filename,"abc");*/
           fp = fopen(id_filename, "w");
-          //cout << "ID filename: " << id_filename << endl;
-          /* Fill in the upload filename field */ 
           curl_formadd(&formpost,
                      &lastptr,
                      CURLFORM_COPYNAME, "userfile",
@@ -204,7 +166,7 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
                 return false;
               }
               //return true;
-          }
+         // }
       }
 return true;
 }
