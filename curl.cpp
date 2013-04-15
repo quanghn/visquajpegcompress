@@ -6,7 +6,7 @@
 #include <fstream>
 
 using namespace std;
-string token_input = "65897756", root_dir="/data/test_dir/", username_input = "test2", url_input="http://api.vn.visqua.com", filename , keep_original="yes";
+string token_input = "65897756", username_input = "test2", url_input="http://api.vn.visqua.com", filename , keep_original="yes";
 #define MAXPATHLEN 5000
 
 string splitFilename(const string str) {
@@ -27,7 +27,7 @@ void split_path(string path, string &dirname, string &input_short_filename) {
   }
 }
 
-bool curl(string &token_input, string &root_dir, string &username_input, string &url_input, string &filename, string &keep_original){
+bool curl(string &token_input, string &username_input, string &url_input, string &filename, string &keep_original){
   char token[FILENAME_MAX];
   char username[FILENAME_MAX];
   strcpy(token,token_input.c_str());
@@ -131,5 +131,5 @@ int main(int argc, char *argv[]){
   cout << "url_input: " << url_input << endl;
   cout << "keep_original: " << keep_original << endl;
   cout << "filename: " << filename << endl;
-curl(token_input, root_dir, username_input, url_input,filename, keep_original);
+curl(token_input, username_input, url_input,filename, keep_original);
 }
