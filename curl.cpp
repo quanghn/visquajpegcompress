@@ -1,7 +1,6 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
-#include <string.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <sys/types.h>
@@ -51,15 +50,16 @@ bool curl(string &token_input, string &root_dir, string &username_input, string 
           curl_global_init(CURL_GLOBAL_ALL);
           curl = curl_easy_init();
           headerlist = curl_slist_append(headerlist, buf);
-          int id = (rand()%10000)*10000+rand()%10000;
-          cout << "id: " << id << endl;
-          stringstream string_id;
-          string_id << id;
+          //int id = (rand()%10000)*10000+rand()%10000;
+          //cout << "id: " << id << endl;
+          //stringstream string_id;
+          //string_id << id;
           long http_status;
           string tmp_input = "/tmp/";
           string filename_tmp;
           filename_tmp = splitFilename(filename);
           string temp_str = tmp_input + filename_tmp;
+          cout << "File temp: " << temp_str << endl;
           char* id_filename = (char*) temp_str.c_str();
           fp = fopen(id_filename, "w");
           curl_formadd(&formpost,
@@ -99,7 +99,7 @@ bool curl(string &token_input, string &root_dir, string &username_input, string 
             curl_easy_cleanup(curl);
             curl_slist_free_all (headerlist);
             fclose(fp);
-            //cout << "F2: " << inputfile << endl;
+            cout << "Copy temp file to original file: " << inputfile << endl;
               if ( http_status == 200 )
               {
                 puts ( "File successfully compressed" );
@@ -109,10 +109,10 @@ bool curl(string &token_input, string &root_dir, string &username_input, string 
                 char ch;
                 //fstream fo;
                 if(!f1) 
-                  //fo << "Can't open INPUT file: " << f1 << "id_filename: " << id_filename << endl;
+                  cout << "Can't open INPUT file: " << f1 << "id_filename: " << id_filename << endl;
                   // fo.close();
                 if(!f2) 
-                  //fo << "Can't open OUTPUT file" << endl;
+                  cout << "Can't open OUTPUT file" << endl;
                  // fo.close();
                 while(f1 && f1.get(ch) ) 
                 f2.put(ch);
@@ -124,11 +124,6 @@ bool curl(string &token_input, string &root_dir, string &username_input, string 
               else
               {
                 perror( "Error compressing file" );
-                //fstream fo;
-                //fo.open((char*)"debug.log", fstream::in | fstream::out | fstream::app);
-                //string datetime = get_current_datetime();
-                //fo << datetime << " " << filename << " failed "<< endl; 
-                //fo.close();
                 return false;
               }
             }
