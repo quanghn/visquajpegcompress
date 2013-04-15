@@ -1,13 +1,9 @@
 #include <string.h>
 #include <iostream>
-#include <stdlib.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <fstream>
-#include <sstream>
 
 using namespace std;
 string token_input = "65897756", root_dir="/data/test_dir/", username_input = "test2", url_input="http://api.vn.visqua.com", filename , keep_original="yes";
