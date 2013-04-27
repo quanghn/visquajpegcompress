@@ -5,6 +5,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original);
+bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original, string &debug);
 
 #endif

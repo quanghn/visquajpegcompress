@@ -1,5 +1,4 @@
 #include <iostream>
-//#include <ev.h>
 #include <stdlib.h>
 #include <string.h>
 #include <map>
@@ -11,50 +10,21 @@
 #include <cstring>
 #include <curl/curl.h>
 #include <curl/easy.h>
-//#include <zip.h>
 #include "support_functions.h"
 
-bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original) {
+bool visqua_compress(string &token_input, string &username_input, string &root_dir, string &url_input, string &filename, string &log_file, string &keep_original, string &debug) {
   char token[FILENAME_MAX];
   char username[FILENAME_MAX];
   strcpy(token,token_input.c_str());
   strcpy(username, username_input.c_str());
- // Exiv2::Image::AutoPtr image;
-  //image = Exiv2::ImageFactory::open(filename);
-  //assert(image.get() != 0);
-  //image->readMetadata();
-  //Exiv2::IptcData &iptcData = image->iptcData();
-//Exiv2::ExifData &exifData = image->exifData();
-  //Exiv2::IptcData::const_iterator end_iptcData = iptcData.end();
-//Exiv2::ExifData::const_iterator end_exifData = exifData.end();
   char inputfile[FILENAME_MAX];
   char outputfile[FILENAME_MAX];
-        
-        
   strcpy(inputfile,filename.c_str());
   string input_dir, input_short_filename;
   split_path(filename, input_dir, input_short_filename);
   string output_dir = get_output_dir_visqua(input_dir, root_dir);
-  
-
-  //for (Exiv2::IptcData::const_iterator md = iptcData.begin(); md != end_iptcData; ++md) {
-   // string compressed_by_visqua = md->value().toString().c_str();
-  
-     // if (compressed_by_visqua == "Compressed by Visqua")
-    //{            
-    //    status_of_compress = true;
-    //    break;
-    //}
-  //}
-    //  if (status_of_compress)
-    //  {
-    //    cout << filename << " was compressed by Visqua" << "'\n";
-    //  }
-    //  else{
           if (keep_original == "yes"){
-          
           if (output_dir != ""){
-            //cout << "does not exists" << endl;
             mkpath(output_dir.c_str(), 0777);
             string output_full_filename = output_dir + input_short_filename;
             strcpy(outputfile,output_full_filename.c_str());
@@ -69,7 +39,9 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
           while(orig_file && orig_file.get(ch_backup)) 
 
           backup_file.put(ch_backup);
+          if (debug =="1"){
           cout << "copy " << inputfile << " to " << outputfile << endl;
+          }
           }
           //cout << "has not compressed by visqua before" << "'\n";
           CURL *curl;
@@ -133,36 +105,38 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
             //cout << "F2: " << inputfile << endl;
               if ( http_status == 200 )
               {
+                if (debug == "1"){
                 puts ( "File successfully compressed" );
+                }
                 ifstream f1 (id_filename, fstream::binary);
                 ofstream f2 (inputfile, fstream::trunc|fstream::binary);
 
                 char ch;
-                fstream fo;
-                fo.open((char*)log_file.c_str(), fstream::in | fstream::out | fstream::app);
+                //fstream fo;
+                //fo.open((char*)log_file.c_str(), fstream::in | fstream::out | fstream::app);
                 if(!f1) 
-                  fo << "Can't open INPUT file: " << f1 << "id_filename: " << id_filename << endl;
+                  cerr << "Can't open INPUT file: " << f1 << "id_filename: " << id_filename << endl;
                    //fo.close();
                 if(!f2) 
-                  fo << "Can't open OUTPUT file" << endl;
+                  cerr << "Can't open OUTPUT file" << endl;
                   //fo.close();
                 while(f1 && f1.get(ch) ) 
                 f2.put(ch);
                 unlink (id_filename);
                 
                 string datetime = get_current_datetime();
-                fo << datetime << " " << filename << " successfully "<< endl; 
-                fo.close();
+                //fo << datetime << " " << filename << " successfully "<< endl; 
+                //fo.close();
                 return true;
               }
               else
               {
                 perror( "Error compressing file" );
-                fstream fo;
-                fo.open((char*)log_file.c_str(), fstream::in | fstream::out | fstream::app);
-                string datetime = get_current_datetime();
-                fo << datetime << " " << filename << " failed "<< endl; 
-                fo.close();
+                //fstream fo;
+                //fo.open((char*)log_file.c_str(), fstream::in | fstream::out | fstream::app);
+                //string datetime = get_current_datetime();
+                //fo << datetime << " " << filename << " failed "<< endl; 
+                //fo.close();
                 return false;
               }
               //return true;
@@ -170,5 +144,3 @@ bool visqua_compress(string &token_input, string &username_input, string &root_d
       }
 return true;
 }
-
- 

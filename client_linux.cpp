@@ -7,7 +7,7 @@
 #include <queue>
 #include <list>
 #include <ctime>
-#include <cassert>
+//#include <cassert>
 #include <iomanip>
 #include <exiv2/exif.hpp>
 #include <exiv2/image.hpp>
@@ -23,45 +23,16 @@ using namespace std;
 #define MAX_COMPRESS_PROCESS 4
 #define MAXLINELENGTH 1024
 
-using namespace std;
-class Ping{
-private:
-       string target;
-public:
-       Ping(){}
-       Ping(string _target);
-       void setTarget( string _target);
-       void startPing();
-};
-Ping::Ping(string _target) : target( _target){}
-
-void Ping::setTarget( string _target )
-{
-     this->target = _target ;
-}
-void Ping::startPing()
-{
-     cout << "Pinging " << target << endl;
-     cout << "Please wait..." << endl ;
-     string pingStr = "ping  " + target ;
-
-     int flag = system( pingStr.c_str());
-     cout << "flag" << flag << endl;
-}
 struct file_to_compress {
 	string inname, outname, username;
 };
 
-string s_month[12] = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"};
-//int init_sql = 0;
-////MYSQL mysql;
 const int NUM_OF_EXCLUDE_DIR = 1;
 string exclude_dir[NUM_OF_EXCLUDE_DIR] = {"original_files"};
 map<int, string>wd_to_dir_name;
 queue<file_to_compress> files_queue;
 int fd;
 int num_of_compress_process = 0, max_of_compress_process = MAX_COMPRESS_PROCESS;
-
 ev_child cw[MAX_COMPRESS_PROCESS];
 int pid_of_ev[MAX_COMPRESS_PROCESS];
 string root_dir;
@@ -71,29 +42,15 @@ string url_input;
 string log_file;
 string keep_original;
 string output_full_filename;
+string debug;
 map<string, int> files_map;
 /*
-bool insert_compressed_image_infomation_to_file(string log_file, string filename) {
-	ofstream fo(log_file.c_str());
-	//int month = get_current_month() - 1;
-	string datetime = get_current_datetime();
-	if (fo) {
-		fo << datetime << ": " << filename << endl;
-		//fo << endl;
-		//fo.close();
-		return true;
-	}
-	else return false;
-}
+Check input has created
 */
 bool is_input_dir(string input_name) {
 	for (int i=0; i<NUM_OF_EXCLUDE_DIR; i++) {
 		int found = input_name.find(exclude_dir[i]);
-		//cout << "found: " << found << endl;
-		//cerr << "exclude = " << exclude_dir[i] << endl;
 		unsigned int next_slash_position = found + exclude_dir[i].length();
-		//cout << "exclude dir" << exclude_dir[i].length() << endl;
-		//cout << "next_slash_position: " << next_slash_position << endl;
 		if (found > -1) {
 			if ((next_slash_position >= input_name.length()) || (input_name[next_slash_position] == '/')) {
 				return false;
@@ -104,7 +61,6 @@ bool is_input_dir(string input_name) {
 }
 string get_output_dir(string input_dir, string root_dir) {
 	int index = input_dir.find(root_dir);
-	//username = "";
 	if (index != 0) {
 		return "";
 	}
@@ -115,65 +71,70 @@ string get_output_dir(string input_dir, string root_dir) {
 			return root_dir + "original_files/";
 		}
 		else if (index2 == temp.length()-1) {
-			//username = temp.substr(0, index2);
-			//cerr << "username1 = " << username << endl;
 			return  root_dir + "original_files/" + temp.substr(0, index2+1);
-			//cerr << "Input is: " << input_dir << endl;
 		}
 		else {
-			//username = temp.substr(0, index2);
-			//cerr << "username2 = " << username << endl;
 			return root_dir  + "original_files/" +  temp.substr(0, index2+1) + temp.substr(index2+1);
 		}
 	}
 }
 
 void child_cb (EV_P_ struct ev_child *w, int revents);
+
 void get_file_and_compress() {
 	if (files_queue.empty()) {
 		return;
 	}
-	
 	if (num_of_compress_process >= max_of_compress_process)
-		return;
-	
+		return;	
 	struct file_to_compress ftc = files_queue.front(), ftc1;
 	files_queue.pop();
 	string temp = ftc.inname.substr(root_dir.length());
 	files_map[temp] = 0;
+	if (debug == "1"){
 	cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
 	cerr << "size: " << files_queue.size() << endl;
+	}
 	pid_t pid = fork ();
 	if (pid < 0) {
 			cerr << "fork() error" << endl;
 		} 
 		else if (pid==0) {
-
 			//tien trinh con
-			//clock_t start_time,elapsed;
-			//double elapsed_time; 
-			//start_time = clock(); 
-
-			//int insize, outsize, saving, inname;
 			string filename = ftc.inname;
+			if (debug == "1"){
 			cout << "Checking file:'" << ftc.inname << "'\n";
-			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
+			}
+			bool get_metadata = metadata(root_dir, filename);
+			if (get_metadata)
+			{
+				if (debug == "1"){
+				cout << "get_metadata Ok" << endl;
+				}
+			}
+			else{
+			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original, debug);
 			//}
 			if (isSent)
-			{}
-				//cout << "Ok" << endl;
+			{
+				if (debug == "1"){
+				cout << "Ok" << endl;
+				}
+			}
 			else{
+				if (debug == "1"){
 				cerr << "push file: " << filename << " to queue \n" << endl;
-				//cout << "Temp: " << temp << endl;
+				}
 				if (files_map[temp] == 0) {
 						files_queue.push(ftc);
 						files_map[temp] = 1;
 					}
+				if (debug == "1"){
 				cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
 				cerr << "size: " << files_queue.size() << endl;
-				//cout << "Pid: " << pid << endl;
-				//num_of_compress_process++;
+				}				
 				}
+			}	
 			_exit(0);
 		}
 		else {
@@ -192,8 +153,7 @@ void get_file_and_compress() {
 				}
 			}
 			num_of_compress_process++;
-		}
-	
+		}	
 }
 
 void child_cb (EV_P_ struct ev_child *w, int revents) {
@@ -215,21 +175,12 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 		split_path(input_full_filename, input_dir, input_short_filename);
 		
 		if (is_input_dir(input_dir)) {
-			//string username = "";
-			//cout << "is input dir"<< endl;
-			
 			string output_dir = get_output_dir(input_dir, root_dir);
-			
-			//cout << "out dir " << output_dir << endl;
 			string output_full_filename = output_dir + input_short_filename;
-			//cout << "input_short_filename" << input_short_filename << endl;
 			
 			bool need_to_insert = false;
 			if (!overwrite) {
-				//bool exist = is_exist(output_full_filename);
-				//if (!exist) {
 				need_to_insert = true;
-				//}
 			}
 			else {
 				need_to_insert = true;
@@ -239,9 +190,10 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 				struct file_to_compress ftc;
 				
 				ftc.inname = input_full_filename;
+				if (debug =="1"){
 				cerr << "push file: " << input_full_filename << " to queue \n" << endl;
+				}
 				string temp = input_full_filename.substr(root_dir.length());
-				//cout << "Temp: " << temp << endl;
 				if (files_map[temp] == 0) {
 					files_queue.push(ftc);
 					files_map[temp] = 1;
@@ -268,19 +220,21 @@ void readable_cb (struct ev_loop *loop, struct ev_io *w, int revents) {
 						if (keep_original == "yes"){
 
 						string output_dir = get_output_dir(current_path, root_dir);
-						if (output_dir != "" ){
-							
+						if (output_dir != "" ){							
 							mkpath(output_dir.c_str(), 0777);
-
 							}
 						}
 					int wd = inotify_add_watch( fd, current_path.c_str(), IN_ALL_EVENTS);
 					wd_to_dir_name[wd] = current_path;
+					if (debug == "1"){
 					cerr << "The directory " << event->name << " has been created in" << path << endl;
+					}	
 					}
             }
             else {
+            	if (debug == "1"){
 				cerr << "The file " << event->name << " was created in path " << path << endl;
+				}
             }
         }
 		else if (event->mask & IN_MOVED_TO) {
@@ -308,7 +262,9 @@ void readable_cb (struct ev_loop *loop, struct ev_io *w, int revents) {
 				//cerr << "The directory " << event->name << " was modified to path " << path << endl;       
             }
             else {
+            	if (debug == "1"){
 				cerr << "The file " << event->name << " was created in " << path << endl;
+				}
 				//cerr << "abc" << endl;
 	
 				wait_to_compress(path + "/" + string(event->name), true);
@@ -384,7 +340,7 @@ void timeout_cb (struct ev_loop *loop, struct ev_timer *w, int revents) {
 	}
 	
 }
-void read_config_file(string configfile, string &token_input, string &url_input, string &username_input, string &root_dir, string &log_file, string &keep_original)
+void read_config_file(string configfile, string &token_input, string &url_input, string &username_input, string &root_dir, string &log_file, string &keep_original, string &debug)
 {
 	std::map < std::string, std::string > myMap;
     char input[MAXLINELENGTH];
@@ -425,22 +381,22 @@ void read_config_file(string configfile, string &token_input, string &url_input,
         root_dir = myMap["root_dir"];
         log_file = myMap["log_file"];
         keep_original = myMap["keep_original"];
+        debug = myMap["debug"];
     }
     fclose(fin);
 }
-int main(int argc, char *argv[]) {
-	
-	
+int main(int argc, char *argv[]) {	
 	if (argc < 1) {
 		cerr << "Usage: \n" << endl;
 		return 0;
 	}
-	read_config_file("visqua.conf", token_input, url_input, username_input, root_dir, log_file, keep_original);
+	read_config_file("/etc/visquacompress/visqua.conf", token_input, url_input, username_input, root_dir, log_file, keep_original, debug);
 	cout << "token: " << token_input << endl;
 	cout << "root_dir: " << root_dir << endl;
 	cout << "log_file: " << log_file << endl;
 	cout << "url_input: " << url_input << endl;
 	cout << "keep_original: " << keep_original << endl;
+	cout << "debug mode: " << debug << endl;
 	
 	if (root_dir[root_dir.length()-1] != '/') {
 		root_dir = root_dir + '/';

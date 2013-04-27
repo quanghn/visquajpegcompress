@@ -7,7 +7,7 @@
 #include <queue>
 #include <list>
 #include <ctime>
-#include <cassert>
+//#include <cassert>
 #include <iomanip>
 #include <exiv2/exif.hpp>
 #include <exiv2/image.hpp>
@@ -42,8 +42,11 @@ string url_input;
 string log_file;
 string keep_original;
 string output_full_filename;
+string debug;
 map<string, int> files_map;
-
+/*
+Check input has created
+*/
 bool is_input_dir(string input_name) {
 	for (int i=0; i<NUM_OF_EXCLUDE_DIR; i++) {
 		int found = input_name.find(exclude_dir[i]);
@@ -68,65 +71,68 @@ string get_output_dir(string input_dir, string root_dir) {
 			return root_dir + "original_files/";
 		}
 		else if (index2 == temp.length()-1) {
-			//username = temp.substr(0, index2);
-			//cerr << "username1 = " << username << endl;
 			return  root_dir + "original_files/" + temp.substr(0, index2+1);
-			//cerr << "Input is: " << input_dir << endl;
 		}
 		else {
-			//username = temp.substr(0, index2);
-			//cerr << "username2 = " << username << endl;
 			return root_dir  + "original_files/" +  temp.substr(0, index2+1) + temp.substr(index2+1);
 		}
 	}
 }
 
-
 void child_cb (EV_P_ struct ev_child *w, int revents);
+
 void get_file_and_compress() {
 	if (files_queue.empty()) {
 		return;
 	}
-	
 	if (num_of_compress_process >= max_of_compress_process)
-		return;
-	
+		return;	
 	struct file_to_compress ftc = files_queue.front(), ftc1;
 	files_queue.pop();
 	string temp = ftc.inname.substr(root_dir.length());
 	files_map[temp] = 0;
+	if (debug == "1"){
 	cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
 	cerr << "size: " << files_queue.size() << endl;
+	}
 	pid_t pid = fork ();
 	if (pid < 0) {
 			cerr << "fork() error" << endl;
 		} 
 		else if (pid==0) {
-
 			//tien trinh con
 			string filename = ftc.inname;
+			if (debug == "1"){
 			cout << "Checking file:'" << ftc.inname << "'\n";
+			}
 			bool get_metadata = metadata(root_dir, filename);
 			if (get_metadata)
 			{
-				//cout << "get_metadata Ok" << endl;
+				if (debug == "1"){
+				cout << "get_metadata Ok" << endl;
+				}
 			}
 			else{
-			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original);
+			bool isSent = visqua_compress(token_input, username_input, root_dir, url_input, filename, log_file, keep_original, debug);
 			//}
 			if (isSent)
 			{
+				if (debug == "1"){
 				cout << "Ok" << endl;
+				}
 			}
 			else{
+				if (debug == "1"){
 				cerr << "push file: " << filename << " to queue \n" << endl;
-				//cout << "Temp: " << temp << endl;
+				}
 				if (files_map[temp] == 0) {
 						files_queue.push(ftc);
 						files_map[temp] = 1;
 					}
+				if (debug == "1"){
 				cerr << endl << "QUEUE: " << files_queue.size() << " files left" << endl;
 				cerr << "size: " << files_queue.size() << endl;
+				}				
 				}
 			}	
 			_exit(0);
@@ -184,9 +190,10 @@ void wait_to_compress(string input_full_filename, bool overwrite) {
 				struct file_to_compress ftc;
 				
 				ftc.inname = input_full_filename;
+				if (debug =="1"){
 				cerr << "push file: " << input_full_filename << " to queue \n" << endl;
+				}
 				string temp = input_full_filename.substr(root_dir.length());
-				//cout << "Temp: " << temp << endl;
 				if (files_map[temp] == 0) {
 					files_queue.push(ftc);
 					files_map[temp] = 1;
@@ -213,19 +220,21 @@ void readable_cb (struct ev_loop *loop, struct ev_io *w, int revents) {
 						if (keep_original == "yes"){
 
 						string output_dir = get_output_dir(current_path, root_dir);
-						if (output_dir != "" ){
-							
+						if (output_dir != "" ){							
 							mkpath(output_dir.c_str(), 0777);
-
 							}
 						}
 					int wd = inotify_add_watch( fd, current_path.c_str(), IN_ALL_EVENTS);
 					wd_to_dir_name[wd] = current_path;
+					if (debug == "1"){
 					cerr << "The directory " << event->name << " has been created in" << path << endl;
+					}	
 					}
             }
             else {
+            	if (debug == "1"){
 				cerr << "The file " << event->name << " was created in path " << path << endl;
+				}
             }
         }
 		else if (event->mask & IN_MOVED_TO) {
@@ -253,7 +262,9 @@ void readable_cb (struct ev_loop *loop, struct ev_io *w, int revents) {
 				//cerr << "The directory " << event->name << " was modified to path " << path << endl;       
             }
             else {
+            	if (debug == "1"){
 				cerr << "The file " << event->name << " was created in " << path << endl;
+				}
 				//cerr << "abc" << endl;
 	
 				wait_to_compress(path + "/" + string(event->name), true);
@@ -279,11 +290,9 @@ void listdir(char* dirname, list<string> &dirs_list) {
 		/* Don't descend up the tree or include the current directory */
 		if(strncmp(entry->d_name, "..", 2) != 0 && strncmp(entry->d_name, ".", 1) != 0) {
 			strncpy(longest_name, dirname, MAXPATHLEN);
-           if (dirname[strlen(dirname)-1] != '/') 
+           	if (dirname[strlen(dirname)-1] != '/') 
 				strncat(longest_name, "/", 256);
 				strncat(longest_name, entry->d_name, 256);
-			
-			//printf("longges_name = %s\n", longest_name);
 			if (entry->d_type == DT_DIR) {
 				strncat(longest_name, "/", MAXPATHLEN);
 				bool status = is_input_dir(string(longest_name));
@@ -329,7 +338,7 @@ void timeout_cb (struct ev_loop *loop, struct ev_timer *w, int revents) {
 	}
 	
 }
-void read_config_file(string configfile, string &token_input, string &url_input, string &username_input, string &root_dir, string &log_file, string &keep_original)
+void read_config_file(string configfile, string &token_input, string &url_input, string &username_input, string &root_dir, string &log_file, string &keep_original, string &debug)
 {
 	std::map < std::string, std::string > myMap;
     char input[MAXLINELENGTH];
@@ -370,22 +379,22 @@ void read_config_file(string configfile, string &token_input, string &url_input,
         root_dir = myMap["root_dir"];
         log_file = myMap["log_file"];
         keep_original = myMap["keep_original"];
+        debug = myMap["debug"];
     }
     fclose(fin);
 }
-int main(int argc, char *argv[]) {
-	
-	
+int main(int argc, char *argv[]) {	
 	if (argc < 1) {
 		cerr << "Usage: \n" << endl;
 		return 0;
 	}
-	read_config_file("/etc/visquacompress/visqua.conf", token_input, url_input, username_input, root_dir, log_file, keep_original);
+	read_config_file("/etc/visquacompress/visqua.conf", token_input, url_input, username_input, root_dir, log_file, keep_original, debug);
 	cout << "token: " << token_input << endl;
 	cout << "root_dir: " << root_dir << endl;
 	cout << "log_file: " << log_file << endl;
 	cout << "url_input: " << url_input << endl;
 	cout << "keep_original: " << keep_original << endl;
+	cout << "debug mode: " << debug << endl;
 	
 	if (root_dir[root_dir.length()-1] != '/') {
 		root_dir = root_dir + '/';

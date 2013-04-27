@@ -182,7 +182,7 @@ bool is_url_jpeg(string url){
 			} else {
 				remove(header_info_filename.c_str());
 				return false;
-			} 
+±			} 
 		}
 	}
 }
@@ -319,11 +319,12 @@ bool metadata(string &root_dir, string &filename){
   }
       if (status_of_compress)
       {
-        cout << filename << " was compressed by Visqua" << "'\n";
+
+        cout << filename << " was compressed by Visqua. Nothing to do!" << "\n";
         return true;
       }
       else{
-        cout << "has not compressed by visqua before" << "'\n";
+        cout << "has not compressed by visqua before. Visqua will send it to Visqua JPEGCompress Engine and compress!" << "'\n";
         return false;
       }
   //return true;
