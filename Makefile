@@ -7,16 +7,16 @@ LIBS_VISQUA := lib/libev.a lib/libzip.a lib/libz.a  lib/libexiv2.a lib/libexpatw
 LINK := -L /home/quang/glibc/ 
 all: binary/visquacompress_i386 debian/usr/bin/visquacompress
 
-debian/usr/bin/visquacompress: $(OBJECTS) client.cpp
-	$(CPP) -o debian/usr/bin/visquacompress client.cpp -static-libgcc -static-libstdc++ $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static
+debian/usr/bin/visquacompress: $(OBJECTS) src/client.cpp
+	$(CPP) -o debian/usr/bin/visquacompress src/client.cpp $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static $(LINK)
 	
-binary/visquacompress_i386: $(OBJECTS) client_linux.cpp
-	$(CPP) -o binary/visquacompress_i386 client_linux.cpp $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static $(LINK)
+binary/visquacompress_i386: $(OBJECTS) src/client_linux.cpp
+	$(CPP) -o binary/visquacompress_i386 src/client_linux.cpp $(OBJECTS) $(INCLUDES) $(LIBS_VISQUA) -static $(LINK)
 
-support_functions.o: support_functions.cpp support_functions.h
-	$(CPP) -c  support_functions.cpp  $(INCLUDES) -static
-visqua_compress.o: visqua_compress.cpp visqua_compress.h
-	$(CPP) -c  visqua_compress.cpp -static-libgcc  $(INCLUDES) -static
+support_functions.o: src/support_functions.cpp src/support_functions.h
+	$(CPP) -c  src/support_functions.cpp  $(INCLUDES)
+visqua_compress.o: src/visqua_compress.cpp src/visqua_compress.h
+	$(CPP) -c  src/visqua_compress.cpp -static-libgcc  $(INCLUDES)
 	
 clean:
 	rm -rf debian/usr/bin/visquacompress

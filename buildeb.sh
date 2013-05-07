@@ -27,7 +27,7 @@ elif [ "$1" == "debtest" ]; then
 else
 	echo -e "\033[32m1) upload to source code to visqua"
 	echo -e "\033[0m"
-	scp client.cpp client_linux.cpp visqua_compress.h visqua_compress.cpp support_functions.h support_functions.cpp visqua@visqua.com:/home/visqua/workspace
+	scp src/client.cpp src/client_linux.cpp src/visqua_compress.h src/visqua_compress.cpp src/support_functions.h src/support_functions.cpp visqua@visqua.com:/home/visqua/workspace
 	echo -e "\033[32m2) Make on Visqua"
 	echo -e "\033[0m"
 	ssh visqua@visqua.com 'cd /home/visqua/workspace; make'
@@ -38,7 +38,7 @@ echo -e "\033[0m"
 	echo -e "\033[32m Done build"
 	echo -e "\033[32m4) Upload and build on linux 64bit"
 	echo -e "\033[0m"
-	scp client.cpp client_linux.cpp visqua_compress.h visqua_compress.cpp support_functions.h support_functions.cpp quanghn@aaz1.rg.vncomputing.com:/home/quanghn/workspace/
+	scp src/client.cpp src/client_linux.cpp src/visqua_compress.h src/visqua_compress.cpp src/support_functions.h src/support_functions.cpp quanghn@aaz1.rg.vncomputing.com:/home/quanghn/workspace/
 	ssh quanghn@aaz1.rg.vncomputing.com 'cd /home/quanghn/workspace; make'
 	echo -e "\033[32m5) Download and build deb file"
 	echo -e "\033[0m"

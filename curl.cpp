@@ -46,10 +46,6 @@ bool curl(string &token_input, string &username_input, string &url_input, string
           curl_global_init(CURL_GLOBAL_ALL);
           curl = curl_easy_init();
           headerlist = curl_slist_append(headerlist, buf);
-          //int id = (rand()%10000)*10000+rand()%10000;
-          //cout << "id: " << id << endl;
-          //stringstream string_id;
-          //string_id << id;
           long http_status;
           string tmp_input = "/tmp/";
           string filename_tmp;
