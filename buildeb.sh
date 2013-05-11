@@ -14,6 +14,16 @@ if [ "$1" == "deb" ]; then
 	scp visquacompress_1.0.1_amd64.deb visqua@visqua.com:/home/visqua/www/dl/dists/stable/main/binary-amd64
 	ssh visqua@visqua.com 'cd /home/visqua/www/dl/; dpkg-scanpackages dists/stable/main/binary-i386 /dev/null | gzip -9c > /home/visqua/www/dl/dists/stable/main/binary-i386/Packages.gz'
 	ssh visqua@visqua.com 'cd /home/visqua/www/dl/; dpkg-scanpackages dists/stable/main/binary-amd64 /dev/null | gzip -9c > /home/visqua/www/dl/dists/stable/main/binary-amd64/Packages.gz'
+elif [ "$1" == "rpm" ]; then
+	echo -e "\033[32m Build rpm i386"
+	echo -e "\033[0m"
+	scp -r centos/visquajpegcompress-1.0/* quanghn@10.10.10.235:/home/quanghn/visquajpegcompress-1.0/
+	scp centos/visqua.spec quanghn@10.10.10.235:/home/quanghn/rpmbuild/SPECS/
+	ssh quanghn@10.10.10.235 'tar -zcvf visquajpegcompress.tar.gz visquajpegcompress-1.0; cp visquajpegcompress.tar.gz rpmbuild/SOURCES; rpmbuild -ba rpmbuild/SPECS/visqua.spec'
+	scp quanghn@10.10.10.235:/home/quanghn/rpmbuild/RPMS/i686/visquajpegcompress-1.0-1.el6.i686.rpm /home/quang/workspace/
+	scp quanghn@10.10.10.235:/home/quanghn/rpmbuild/SRPMS/visquajpegcompress-1.0-1.el6.src.rpm /home/quang/workspace/
+	echo -e "\033[32m*) Finished!"
+	echo -e "\033[0m"
 elif [ "$1" == "maketest" ]; then
 	echo -e "\033[32m Make test"
 	echo -e "\033[0m"
@@ -57,6 +67,13 @@ echo -e "\033[0m"
 	echo -e "\033[32m7) Upoad to binary files to http://visqua.com/dl"
 	echo -e "\033[0m"
 	scp binary/visquacompress_amd64 binary/visquacompress_i386 binary/visqua.conf visqua@visqua.com:/home/visqua/www/dl/
+	echo -e "\033[32m Build rpm i386"
+	echo -e "\033[0m"
+	scp centos/visqua.spec quanghn@10.10.10.235:/home/quanghn/rpmbuild/SPECS/
+	scp -r centos/visquajpegcompress-1.0/* quanghn@10.10.10.235:/home/quanghn/visquajpegcompress-1.0/
+	ssh quanghn@10.10.10.235 'tar -zcvf visquajpegcompress.tar.gz visquajpegcompress-1.0; cp visquajpegcompress.tar.gz rpmbuild/SOURCES; rpmbuild -ba rpmbuild/SPECS/visqua.spec'
+	scp quanghn@10.10.10.235:/home/quanghn/rpmbuild/RPMS/i686/visquajpegcompress-1.0-1.el6.i686.rpm /home/quang/workspace/
+	scp quanghn@10.10.10.235:/home/quanghn/rpmbuild/SRPMS/visquajpegcompress-1.0-1.el6.src.rpm /home/quang/workspace/
 	echo -e "\033[32m*) Finished!"
 	echo -e "\033[0m"
 fi
