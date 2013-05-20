@@ -27,6 +27,7 @@ cp -r %{_builddir}/%name-%version/* %{buildroot}/
 #%config %{_sysconfdir}/*
 %config %{_sysconfdir}/visquacompress/visqua.conf
 %config %{_sysconfdir}/init.d/visquacompress
+%config %{_sysconfdir}/rc.d/visquacompress
 %{_bindir}/*
 %post
 chkconfig --add visquacompress

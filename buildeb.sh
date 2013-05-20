@@ -21,15 +21,15 @@ elif [ "$1" == "rpm" ]; then
 	scp  -P 235 centos-x86/visqua.spec quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/SPECS/
 	scp -P 235 -r centos-x86/visquajpegcompress-1.0 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/
 	ssh quanghn@vnc.f.vnpt.lg.vncomputing.com -p 235 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp -P 235 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/i686/visquajpegcompress-1.0-1.el6.i686.rpm /home/quang/workspace/
+	scp -P 235 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/i686/*.rpm /home/quang/workspace/
 	echo -e "\033[32m Build rpm amd64"
 	echo -e "\033[0m"
 	cp amd64/debian/usr/bin/visquacompress centos-amd64/visquajpegcompress-1.0/usr/bin/
 	scp  -P 133 centos-amd64/visqua.spec quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/SPECS/
 	scp -P 133 -r centos-amd64/visquajpegcompress-1.0 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/
 	ssh quanghn@vnc.f.vnpt.lg.vncomputing.com -p 133 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp -P 133 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/x86_64/visquajpegcompress-1.0-1.el6.x86_64.rpm /home/quang/workspace/
-elif [ "$1" == "rpmlocal" ]; then
+	scp -P 133 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/x86_64/*.rpm /home/quang/workspace/
+elif [ "$1" == "rpminternal" ]; then
 	echo -e "\033[32m Build rpm i386"
 	echo -e "\033[0m"
 	cp debian/usr/bin/visquacompress centos-x86/visquajpegcompress-1.0/usr/bin/
@@ -38,14 +38,24 @@ elif [ "$1" == "rpmlocal" ]; then
 	scp  centos-x86/visqua.spec quanghn@10.10.10.166:/home/quanghn/rpmbuild/SPECS/
 	scp -r centos-x86/visquajpegcompress-1.0 quanghn@10.10.10.166:/home/quanghn/
 	ssh quanghn@10.10.10.166 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp quanghn@10.10.10.166:/home/quanghn/rpmbuild/RPMS/i686/visquajpegcompress-1.0-1.el6.i686.rpm /home/quang/workspace/
+	scp quanghn@10.10.10.166:/home/quanghn/rpmbuild/RPMS/i686/*.rpm /home/quang/workspace/
 	echo -e "\033[32m Build rpm amd64"
 	echo -e "\033[0m"
 	cp amd64/debian/usr/bin/visquacompress centos-amd64/visquajpegcompress-1.0/usr/bin/
 	scp  centos-amd64/visqua.spec quanghn@10.10.10.133:/home/quanghn/rpmbuild/SPECS/
 	scp -r centos-amd64/visquajpegcompress-1.0 quanghn@10.10.10.133:/home/quanghn/
 	ssh quanghn@10.10.10.133 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp quanghn@10.10.10.133:/home/quanghn/rpmbuild/RPMS/x86_64/visquajpegcompress-1.0-1.el6.x86_64.rpm /home/quang/workspace/
+	scp quanghn@10.10.10.133:/home/quanghn/rpmbuild/RPMS/x86_64/*.rpm /home/quang/workspace/
+elif [ "$1" == "rpmlocal" ]; then
+	echo -e "\033[32m Build rpm i386"
+	echo -e "\033[0m"
+	cp debian/usr/bin/visquacompress centos-x86/visquajpegcompress-1.0/usr/bin/
+	echo -e "\033[32m Upload files to server i386"
+	echo -e "\033[0m"
+	scp  centos-x86/visqua.spec quanghn@192.168.5.15:/home/quanghn/rpmbuild/SPECS/
+	scp -r centos-x86/visquajpegcompress-1.0 quanghn@192.168.5.15:/home/quanghn/
+	ssh quanghn@192.168.5.15 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
+	scp quanghn@192.168.5.15:/home/quanghn/rpmbuild/RPMS/i386/*.rpm /home/quang/workspace/
 elif [ "$1" == "maketest" ]; then
 	echo -e "\033[32m Make test"
 	echo -e "\033[0m"
@@ -96,14 +106,15 @@ else
 	scp  -P 235 centos-x86/visqua.spec quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/SPECS/
 	scp -P 235 -r centos-x86/visquajpegcompress-1.0 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/
 	ssh quanghn@vnc.f.vnpt.lg.vncomputing.com -p 235 'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp -P 235 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/i686/visquajpegcompress-1.0-1.el6.i686.rpm /home/quang/workspace/
+	scp -P 235 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/i686/*.rpm /home/quang/workspace/
 	echo -e "\033[32m Build rpm amd64"
 	echo -e "\033[0m"
 	cp binary/visquacompress_amd64 centos-amd64/visquajpegcompress-1.0/usr/bin/visquacompress
 	scp  -P 133 centos-amd64/visqua.spec quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/SPECS/
 	scp -P 133 -r centos-amd64/visquajpegcompress-1.0 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/
 	ssh quanghn@vnc.f.vnpt.lg.vncomputing.com -p 133  'tar -zcvf rpmbuild/SOURCES/visquajpegcompress.tar.gz visquajpegcompress-1.0; rpmbuild -bb rpmbuild/SPECS/visqua.spec'
-	scp -P 133 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/x86_64/visquajpegcompress-1.0-1.el6.x86_64.rpm /home/quang/workspace/
+	scp -P 133 quanghn@vnc.f.vnpt.lg.vncomputing.com:/home/quanghn/rpmbuild/RPMS/x86_64/*.rpm /home/quang/workspace/
+	scp /home/quang/workspace/*.rpm visqua@visqua.com:/home/visqua/www/dl/centos/
 	echo -e "\033[32m*) Finished!"
 	echo -e "\033[0m"
 fi

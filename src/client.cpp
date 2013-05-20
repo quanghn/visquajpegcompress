@@ -7,7 +7,6 @@
 #include <queue>
 #include <list>
 #include <ctime>
-//#include <cassert>
 #include <iomanip>
 #include <exiv2/exif.hpp>
 #include <exiv2/image.hpp>
