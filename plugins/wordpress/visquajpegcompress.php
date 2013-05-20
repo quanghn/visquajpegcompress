@@ -35,7 +35,7 @@ if ($version == '') {
   	add_option('vq_compress_token','','Token','');
 	add_option('vq_compress_url_api','','URL API','http://api.visqua.com');
 	add_option('vq_compress_keep_orig_file','','Keep original file','');
-	add_option('vq_compress_scan_images','','Scan images for compress','yes');
+	add_option('vq_compress_scan_images','','Scan all images in your website for compress','yes');
 }  
 /* actions */
 add_action( 'admin_menu', 'vq_compress_options_page' ); // add option page
@@ -61,7 +61,6 @@ function vq_compress_options(){
     update_option('vq_compress_token',$token);
 	update_option('vq_compress_url_api',$url_api);
 	update_option('vq_compress_keep_orig_file',$keep_orig_file);
-	//update_option('vq_compress_scan_images',$scan_images);
     if ($yesno == 'yes') {
       update_option('vq_compress_yesno','yes');
     }
@@ -69,14 +68,14 @@ function vq_compress_options(){
       update_option('vq_compress_yesno','no');
     }
     if ($scan_images == 'yes'){
-    	echo ('<div id="message" class="updated fade"><p><strong>Scan once your web and compress images. You can click here for information!</strong></p></div>');
+    	echo ('<div id="message" class="updated fade"><p><strong>Scan once your web and compress images. It may take several minutes</strong></p></div>');
     	update_option('vq_compress_scan_images','no');
     	$exec  = PHP_BINDIR.'/php';
     	$depth = 3;
     	$uploads = wp_upload_dir();
     	$images_path = $uploads['basedir'];
     	$root_dir = $_SERVER['DOCUMENT_ROOT'];
-    	$plugins_url = plugin_dir_path(__FILE__)."functons.visquajpegcompress.php";
+    	$plugins_url = plugin_dir_path(__FILE__)."functions.visquajpegcompress.php";
     	system(''.$exec.' -q '.$plugins_url.' '.$token.' '.$url_api.' '.$keep_orig_file.' '.$depth.' '.$root_dir.' '.$images_path.'> '.$root_dir.'/compress.log &');
     	unlink($root_dir."/compress.log");
     }    
@@ -112,7 +111,8 @@ echo('<h3>Settings</h3>
 	    	<select name="keep_orig_file" id="keep_orig_file">  
     			<option value="yes" label="yes"'); if ($keep_orig_file == 'yes') echo(' selected=selected'); echo('>yes</option>
 				<option value="no" label="no"'); if ($keep_orig_file == 'no') echo(' selected=selected'); echo('>no</option>
-			</select> 
+			</select> </br>
+			<small>Store in '); echo $_SERVER['DOCUMENT_ROOT']."/original_files" ;echo ('</small>
 		</td>
 	</tr>
 	<tr>
