@@ -72,11 +72,12 @@ function vq_compress_options(){
     	echo ('<div id="message" class="updated fade"><p><strong>Scan once your web and compress images. You can click here for information!</strong></p></div>');
     	update_option('vq_compress_scan_images','no');
     	$exec  = PHP_BINDIR.'/php';
-    	$depth = 6;
+    	$depth = 3;
+    	$uploads = wp_upload_dir();
+    	$images_path = $uploads['basedir'];
     	$root_dir = $_SERVER['DOCUMENT_ROOT'];
-    	$plugins_url = plugin_dir_path(__FILE__)."visqua_compress.php";
-    	error_log("exec: $exec \n", 3, "$root_dir/error.log");
-    	system(''.$exec.' -q '.$plugins_url.' '.$token.' '.$url_api.' '.$keep_orig_file.' '.$depth.' '.$root_dir.'> '.$root_dir.'/compress.log &');
+    	$plugins_url = plugin_dir_path(__FILE__)."functons.visquajpegcompress.php";
+    	system(''.$exec.' -q '.$plugins_url.' '.$token.' '.$url_api.' '.$keep_orig_file.' '.$depth.' '.$root_dir.' '.$images_path.'> '.$root_dir.'/compress.log &');
     	unlink($root_dir."/compress.log");
     }    
     echo('<div id="message" class="updated fade"><p><strong>Your option are saved.</strong></p></div>');
@@ -170,7 +171,8 @@ function vq_compress_upload($array){
 
 		}
 		//check tag Software of metadata
-		$exif_data = exif_read_data($uploadfile);
+		//ini_set('exif.encode_unicode', 'UTF-8');
+		$exif_data = @exif_read_data("$uploadfile");
 	    $esoftware =$exif_data['Software'];
 	    if ($esoftware != "Compressed by Visqua"){
 			$file_visqua = fopen($uploadfile.'visqua', 'w');
