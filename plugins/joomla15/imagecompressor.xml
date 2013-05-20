@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="content">
+	<name>Content - Image Compressor</name>
+	<author>Quang Ho-Ngoc</author>
+	<creationDate>September 2012</creationDate>
+	<version>1.0</version>
+	<copyright>Copyright (C) 2012 Visqua. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>quang@visqua.com</authorEmail>
+	<authorUrl>http://visqua.com</authorUrl>
+	<description>Automatically compress image in articles. phpCURL must be installed for this to work. Technical support: support@visqua.com. Website http://visqua.com</description>
+	<files>
+		<filename plugin="imagecompressor">imagecompressor.php</filename>
+	</files>
+	<params>
+		<param name="token" type="text" default="58470571" size="10" label="Token" description="description">
+		</param>
+		<param name="keep_orig_file" type="list" default="yes" size="10" label="Keep original file" description="description">
+			<option value="yes">Yes</option>
+			<option value="no">No</option>
+		</param>	
+		<param name="url_api" type="list" size="5" default="http://api-us.visqua.com" label="URL API" description="URL API">
+			<option value="http://api-us.visqua.com">US</option>
+			<option value="http://api-vn.visqua.com">VN</option>
+		</param>
+	</params>
+</install>
